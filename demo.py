@@ -117,17 +117,31 @@ class Myparser_infor(HTMLParser):
         elif self.neighborhood:
             self.value['neighborhood'] = data.strip()
         elif self.overiew and self.li_flag:
-            self.value['overiew'] = self.value['overiew'] + data.strip() + ','
+            data_ = data.strip()
+            if 'Beds' in data_:
+                self.value['beds'] = data_
+            elif'Baths' in data_:
+                self.value['baths'] = data_
+            elif'Built' in data_:
+                self.value['built'] = data_
+            elif'house' in data_ or 'Family' in data_:
+                self.value['type'] = data_
+            elif'sqft lot size' in data_:
+                self.value['lot_space'] = data_
+            elif'/sqft' in data_:
+                self.value['price_sqft'] = data_
+            elif'sqft' in data_:
+                self.value['space'] = data_
         elif self.descrip:
             self.value['description'] = data.strip()
         elif self.price_zip and self.price_zip_count == 0:
-            self.value['Average Listing Price for zip'] = data.strip()
+            self.value['Average_Listing_Price_for_zip'] = data.strip()
             self.price_zip_count += 1
         elif self.price_zip and self.price_zip_count == 1:
-            self.value['Median Sale Price for zip'] = data.strip()
+            self.value['Median_Sale_Price_for_zip'] = data.strip()
             self.price_zip_count += 1
         elif self.price_zip and self.price_zip_count == 2:
-            self.value['Average Sale price/sqft for zip'] = data.strip()
+            self.value['Average_price_sqft_for_zip'] = data.strip()
             self.price_zip_count += 1
 
     # def handle_starttag(self, tag, attrs):
@@ -216,11 +230,12 @@ if __name__ == '__main__':
     # url0 = 'https://www.trulia.com/CA/Los_Angeles'
     # urls, url_next = Get_suburl(url0)
     rows = []
+    headers = ['zipcode', 'address', 'cityState', 'neighborhood', 'price', 'type','beds', 'baths','built','space','lot_space','price_sqft', 'Average_Listing_Price_for_zip','Median_Sale_Price_for_zip','Average_price_sqft_for_zip','description']
     with open('Infors.csv', 'w', newline='') as csvfile1:
-            spamwriter1 = csv.writer(
-                csvfile1, delimiter=" ", quoting=csv.QUOTE_MINIMAL)
-            spamwriter1.writerow("································")
-            csvfile1.close()
+        spamwriter1 = csv.writer(
+            csvfile1, delimiter=" ", quoting=csv.QUOTE_MINIMAL)
+        spamwriter1.writerow("################################")
+        csvfile1.close()
     spamReader = csv.reader(open('urls.csv', newline=''),
                             delimiter=' ', quotechar='|')
     count = 0
@@ -229,33 +244,21 @@ if __name__ == '__main__':
         url = ''.join(row)
         print(url)
         url = "https://www.trulia.com" + url
-        print(url)
         Infors = Get_infor(url)
         count += 1
-        time.sleep(5)
+        time.sleep(3)
         r = ""
         for x in Infors:
-            if x == 'overiew':
-                if 'Beds' in Infors[x] and 'Baths' in Infors[x]:
-                    r += Infors[x] + ','
-                elif'Beds' in Infors[x]:
-                    p = Infors[x].find('Built')
-                    r += Infors[x][:p - 1] + ',' + Infors[x][p - 1:]
-                elif'Baths' in Infors[x]:
-                    p = Infors[x].find('Baths')
-                    r += Infors[x][:p - 3] + ',' + Infors[x][p - 3:]
-                else:
-                    p = Infors[x].find('Built')
-                    r += Infors[x][:p - 1] + ',,' + Infors[x][p - 1:]
-            else:
-                r += Infors[x] + ','
-        print(r)
+            r += Infors[x] + ','
+        # print(r)
         # rows.append(r)
-        with open('Infors.csv', 'a', newline='') as csvfile1:
-            spamwriter1 = csv.writer(
-                csvfile1, delimiter=" ", quoting=csv.QUOTE_MINIMAL)
-            spamwriter1.writerow(r)
+        with open('Infors.csv', 'a') as csvfile1:
+            spamwriter1 = csv.DictWriter(csvfile1, headers)
+            spamwriter1.writeheader()
+            spamwriter1.writerow(Infors)
             csvfile1.close()
+        # if count > 5:
+        #     break
 
     # count = 0
     # for i in range(count + 5):
