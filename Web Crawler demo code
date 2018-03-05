@@ -81,13 +81,6 @@ class Myparser_infor(HTMLParser):
             self.descrip = True
         if tag == 'div' and _attr(attrs, 'class', 'miniCol24 xsCol8 smlCol4 mdCol4 lrgCol4 pvmXxsVisible'):
             self.price_zip = True
-            # if len(attrs) == 0:
-            #     pass
-            # else:
-            #     for (variable, value) in attrs:
-            #         if variable == "data-role" and value == "address":
-            #             print("here")
-            #             self.address = True
 
     def handle_endtag(self, tag):
         if tag == 'div':
@@ -129,17 +122,6 @@ class Myparser_infor(HTMLParser):
         elif self.price_zip and self.price_zip_count == 2:
             self.value['Average Sale price/sqft for zip'] = data.strip()
             self.price_zip_count += 1
-
-    # def handle_starttag(self, tag, attrs):
-    #     if tag == 'div' and _attr(attrs, 'data-title'):
-    #         movie = {}
-    #         movie['actors'] = _attr(attrs, 'data-actors')
-    #         movie['director'] = _attr(attrs, 'data-director')
-    #         movie['duration'] = _attr(attrs, 'data-dutation')
-    #         movie['title'] = _attr(attrs, 'data-title')
-    #         movie['rate'] = _attr(attrs, 'data-rate')
-    #         self.infors.append(movie)
-
 
 def Get_suburl(url):
     headers = {}
@@ -216,12 +198,18 @@ if __name__ == '__main__':
     # url0 = 'https://www.trulia.com/CA/Los_Angeles'
     # urls, url_next = Get_suburl(url0)
     rows = []
+    with open('Infors.csv', 'w', newline='') as csvfile1:
+            spamwriter1 = csv.writer(
+                csvfile1, delimiter=" ", quoting=csv.QUOTE_MINIMAL)
+            spamwriter1.writerow("································")
+            csvfile1.close()
     spamReader = csv.reader(open('urls.csv', newline=''),
                             delimiter=' ', quotechar='|')
     count = 0
     for row in spamReader:
         print("rows :", count)
         url = ''.join(row)
+        print(url)
         url = "https://www.trulia.com" + url
         print(url)
         Infors = Get_infor(url)
