@@ -248,7 +248,7 @@ if __name__ == '__main__':
     count = 0
     for row in spamReader:
         count += 1
-        if count <= 3415:
+        if count <= 4927:
             continue
         print("rows :", count)
         url = ''.join(row)
