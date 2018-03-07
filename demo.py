@@ -15,6 +15,13 @@ from collections import defaultdict
 import time
 
 
+
+
+
+
+
+
+
 class Myparser(HTMLParser):
 
     def __init__(self):
